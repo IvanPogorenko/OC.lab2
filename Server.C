@@ -37,24 +37,23 @@ int main() {
         perror("socket_failed");
         exit(EXIT_FAILURE);
     }
-    signalHandling();
-    sigset_t blockedMask, origMask;
-    signalBlocking(blockedMask, origMask);
     struct sockaddr_in adr;
     memset(&adr, 0, sizeof(adr));
     adr.sin_family = AF_INET;
     adr.sin_addr.s_addr = INADDR_ANY;
     adr.sin_port = htons(PORT);
-
     if (bind(server, (struct sockaddr*)&adr, sizeof(adr)) == -1) {
         perror("bind_failed");
         exit(EXIT_FAILURE);
     }
-
     if (listen(server, 1) == -1) {
         perror("listen_failed");
         exit(EXIT_FAILURE);
     }
+
+    signalHandling();
+    sigset_t blockedMask, origMask;
+    signalBlocking(blockedMask, origMask);
 
     fd_set readfds;
     int maxFd = server;
