@@ -25,12 +25,6 @@ void signalHandling() {
     sigaction(SIGHUP, &sa, NULL);
 }
 
-void signalBlocking(sigset_t blockedMask, sigset_t *origMask){
-    sigemptyset(&blockedMask);
-    sigaddset(&blockedMask, SIGHUP);
-    sigprocmask(SIG_BLOCK, &blockedMask, &origMask);
-}
-
 int main() {
     int server = socket(AF_INET, SOCK_STREAM, 0);
     if(server == -1){
@@ -38,8 +32,12 @@ int main() {
         exit(EXIT_FAILURE);
     }
     signalHandling();
+
     sigset_t blockedMask, origMask;
-    signalBlocking(blockedMask, &origMask);
+    sigemptyset(&blockedMask);
+    sigaddset(&blockedMask, SIGHUP);
+    sigprocmask(SIG_BLOCK, &blockedMask, &origMask);
+
     struct sockaddr_in adr;
     memset(&adr, 0, sizeof(adr));
     adr.sin_family = AF_INET;
